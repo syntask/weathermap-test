@@ -108,7 +108,7 @@
         let source = "hailSource"
         let fill = "hailFill"
         let stroke = "hailStroke"
-        let tileURL = replacePlaceholders('http://127.0.0.1:5500/backend/data/MRMS/MESHMAX2/{{YYYY}}/{{mm}}/{{dd}}/{{HH}}{{MM}}{{SS}}/tiles/{z}/{x}/{y}.pbf', queryDateTime)
+        let tileURL = replacePlaceholders('https://hailmaps.s3.us-east-2.amazonaws.com/data/MRMS/MESHMAX2/{{YYYY}}/{{mm}}/{{dd}}/{{HH}}{{MM}}{{SS}}/tiles/{z}/{x}/{y}.pbf', queryDateTime)
         console.log(tileURL)
 
         if (map.getSource('hailSource')){
