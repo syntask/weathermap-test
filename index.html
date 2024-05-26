@@ -7,13 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css' />
     <script src='https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js'></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
-        body { margin: 0; padding: 0; }
-        html, body, #map { height: 100%; }
-        .maplibregl-ctrl-attrib { display: none !important; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Arial';
+        }
+        
+        html, body, #map { 
+            height: 100%; 
+        }
+        
+        .maplibregl-ctrl-attrib { 
+            display: none !important; 
+        }
+        
         #controlContainer { 
             position: absolute; 
-            background: white; 
+            background: #00000088; 
+            color: white;
             bottom: 16px; 
             left: 16px; 
             right: 16px; 
@@ -21,36 +35,144 @@
             padding: 16px;
             display: flex; 
             align-items: center; 
-            flex-wrap: nowrap; 
+            flex-wrap: wrap; 
+            gap: 8px;
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid #EEEEEE33;
+            font-size: 14px;
+        }
+        
+        #timeSlider {
+            flex-grow: 1;
+            flex-basis: 0;
+            min-width: 300px;
+            margin: 5px 0;
+        }
+        
+        input[type='range'] {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background: #444444;
+            height: 4px;
+            border-radius: 4px;
+        }
+        
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none !important;
+            background: white;
+            height: 16px;
+            width: 16px;
+            border-radius: 999px;
+        }
+        
+        button.timelineButton {
+            border-radius: 999px;
+            min-height: 32px;
+            min-width: 32px;
+            max-height: 32px;
+            max-width: 32px;
+            font-weight: bold;
+            color: white;
+            background-color: #FFFFFF22;
+            border: 1px solid #EEEEEE33;
+        }
+        
+        button.timelineButton:hover {
+            transform: scale(1.1);
+        }
+        
+        button.timelineButton:active {
+            transform: scale(1.05);
+        }
+        
+        input[type='text']{
+            font-size: 14px;
+            padding-left: 12px;
+            padding-right: 12px;
+            height: 32px;
+            width: 72px;
+            border-radius: 8px;
+            color: white;
+            background-color: #FFFFFF22;
+            border: 1px solid #EEEEEE33;
+        }
+        .flatpickr-calendar {
+            left: 16px !important;
+          }
+        .maplibregl-ctrl-group {
+            padding: 2px;
+            border-radius: 8px;
+            background: #00000088; 
+            color: white;
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid #EEEEEE33;
+            font-size: 14px;
         }
 
-        #timeSlider {
-            width: 100%;
-            /* Ensures the slider takes up all the width it can */
-            margin: 5px 0;
-            /* Adds vertical margin if needed */
-            flex-grow: 1;
-            /* Allows the slider to grow and take up available space */
+        .maplibregl-ctrl-group button+button {
+            border-top: 1px solid #EEEEEE33;
         }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23FFFFFF' viewBox='0 0 29 29'%3E%3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23FFFFFF' viewBox='0 0 29 29'%3E%3Cpath d='M10 13c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h9c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13z'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-compass .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23FFFFFF' viewBox='0 0 29 29'%3E%3Cpath d='m10.5 14 4-8 4 8z'/%3E%3Cpath fill='%23888888' d='m10.5 16 4 8 4-8z'/%3E%3C/svg%3E");
+        }
+        
+        .maplibregl-ctrl button.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 33 33'%3E%3Cpath d='M15.17301,17.82692L10.06701,15.75992C9.89101,15.69292,9.75301,15.58492,9.65201,15.43592C9.55101,15.28692,9.5,15.11792,9.5,14.92992C9.5,14.74092,9.55101,14.57492,9.65201,14.43292C9.75301,14.29092,9.89101,14.18592,10.06701,14.11892L22.34601,9.55992C22.52101,9.49192,22.68701,9.48192,22.84301,9.52892C22.99801,9.57692,23.12901,9.65392,23.23801,9.76292C23.34601,9.87092,23.42401,10.00192,23.47101,10.15692C23.51801,10.31292,23.50801,10.47892,23.44001,10.65392L18.88101,22.95392C18.80001,23.14192,18.68601,23.28092,18.53701,23.36892C18.38801,23.45592,18.23201,23.49992,18.07001,23.49992C17.90801,23.49992,17.75301,23.45292,17.60401,23.35792C17.45601,23.26292,17.34101,23.12792,17.26001,22.95392L15.17301,17.82692Z' fill='none' stroke='%23FFFFFF' stroke-width='2'/%3E%3C/svg%3E");
+        }         
+
+        .maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-waiting .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 33 33'%3E%3Cpath d='M15.17301,17.82692L10.06701,15.75992C9.89101,15.69292,9.75301,15.58492,9.65201,15.43592C9.55101,15.28692,9.5,15.11792,9.5,14.92992C9.5,14.74092,9.55101,14.57492,9.65201,14.43292C9.75301,14.29092,9.89101,14.18592,10.06701,14.11892L22.34601,9.55992C22.52101,9.49192,22.68701,9.48192,22.84301,9.52892C22.99801,9.57692,23.12901,9.65392,23.23801,9.76292C23.34601,9.87092,23.42401,10.00192,23.47101,10.15692C23.51801,10.31292,23.50801,10.47892,23.44001,10.65392L18.88101,22.95392C18.80001,23.14192,18.68601,23.28092,18.53701,23.36892C18.38801,23.45592,18.23201,23.49992,18.07001,23.49992C17.90801,23.49992,17.75301,23.45292,17.60401,23.35792C17.45601,23.26292,17.34101,23.12792,17.26001,22.95392L15.17301,17.82692Z' fill='%23FFFFFF' fill-opacity='0.5' stroke='%23FFFFFF' stroke-width='2'/%3E%3C/svg%3E");           
+            animation: none; 
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23FFFFFF' viewBox='0 0 33 33'%3E%3Cpath d='M15.17301,17.82692L10.06701,15.75992C9.89101,15.69292,9.75301,15.58492,9.65201,15.43592C9.55101,15.28692,9.5,15.11792,9.5,14.92992C9.5,14.74092,9.55101,14.57492,9.65201,14.43292C9.75301,14.29092,9.89101,14.18592,10.06701,14.11892L22.34601,9.55992C22.52101,9.49192,22.68701,9.48192,22.84301,9.52892C22.99801,9.57692,23.12901,9.65392,23.23801,9.76292C23.34601,9.87092,23.42401,10.00192,23.47101,10.15692C23.51801,10.31292,23.50801,10.47892,23.44001,10.65392L18.88101,22.95392C18.80001,23.14192,18.68601,23.28092,18.53701,23.36892C18.38801,23.45592,18.23201,23.49992,18.07001,23.49992C17.90801,23.49992,17.75301,23.45292,17.60401,23.35792C17.45601,23.26292,17.34101,23.12792,17.26001,22.95392L15.17301,17.82692Z'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-background .maplibregl-ctrl-icon{
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23FFFFFF' viewBox='0 0 33 33'%3E%3Cpath d='M15.17301,17.82692L10.06701,15.75992C9.89101,15.69292,9.75301,15.58492,9.65201,15.43592C9.55101,15.28692,9.5,15.11792,9.5,14.92992C9.5,14.74092,9.55101,14.57492,9.65201,14.43292C9.75301,14.29092,9.89101,14.18592,10.06701,14.11892L22.34601,9.55992C22.52101,9.49192,22.68701,9.48192,22.84301,9.52892C22.99801,9.57692,23.12901,9.65392,23.23801,9.76292C23.34601,9.87092,23.42401,10.00192,23.47101,10.15692C23.51801,10.31292,23.50801,10.47892,23.44001,10.65392L18.88101,22.95392C18.80001,23.14192,18.68601,23.28092,18.53701,23.36892C18.38801,23.45592,18.23201,23.49992,18.07001,23.49992C17.90801,23.49992,17.75301,23.45292,17.60401,23.35792C17.45601,23.26292,17.34101,23.12792,17.26001,22.95392L15.17301,17.82692Z'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-terrain .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='%23FFFFFF66' viewBox='0 0 22 22'%3E%3Cpath d='m1.754 13.406 4.453-4.851 3.09 3.09 3.281 3.277.969-.969-3.309-3.312 3.844-4.121 6.148 6.886h1.082v-.855l-7.207-8.07-4.84 5.187L6.169 6.57l-5.48 5.965v.871ZM.688 16.844h20.625v1.375H.688Zm0 0'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-ctrl button.maplibregl-ctrl-terrain-enabled .maplibregl-ctrl-icon {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='%23FFFFFF' viewBox='0 0 22 22'%3E%3Cpath d='m1.754 13.406 4.453-4.851 3.09 3.09 3.281 3.277.969-.969-3.309-3.312 3.844-4.121 6.148 6.886h1.082v-.855l-7.207-8.07-4.84 5.187L6.169 6.57l-5.48 5.965v.871ZM.688 16.844h20.625v1.375H.688Zm0 0'/%3E%3C/svg%3E");
+        }
+
+        .maplibregl-user-location-dot, .maplibregl-user-location-dot:before{
+            background-color: #0086F8;
+        }
+
+        .maplibregl-user-location-accuracy-circle {
+            background-color: #0086F833;
+            }
     </style>
 </head>
 <body>
 <div id="map"></div>
 
 <div id="controlContainer">
-    <div style="display: flex; align-items: center;">
-        <label for="date">Date:</label>
-        <input type="text" id="date"> <!-- Adjusted to take minimal space -->
-    </div>
-    <div style="display: flex; align-items: center; flex-grow: 1;">
-        <button id="sliderBackward">&lt;</button>
-        <button id="sliderForward">&gt;</button>
-        <label for="timeSlider">Time:</label>
-        <input type="range" id="timeSlider" min="0" max="86399" value="68400" step="120">
-    </div>
-    <div style="display: flex; align-items: center;">
+        <input type="text" id="inputDate">
+        <button id="buttonSubtractDate" class="timelineButton">&lt;&lt;</button>
+        <button id="buttonSubtractTime" class="timelineButton">&lt;</button>
+        <button id="buttonPlayAnimation" class="timelineButton">&#9658;</button>
+        <button id="buttonAdvanceTime" class="timelineButton">&gt;</button>
+        <button id="buttonAdvanceDate" class="timelineButton">&gt;&gt;</button>
         <span id="timeDisplay">00:00:00</span>
-    </div>
+        <input type="range" id="timeSlider" min="0" max="86399" value="68400" step="120">
 </div>
 
 <script>
@@ -76,6 +198,16 @@
 
     // Update time part when the slider changes
     timeSlider.addEventListener('input', updateDateTime);
+
+    // Initialize Flatpickr with the change event for updating the datetime
+    const fp = flatpickr("#inputDate", {
+        dateFormat: "m/d/y",
+        position: "auto center", // Automatically position above if there's no space below
+        onChange: function (datetimes, dateStr, instance) {
+            datetime = datetimes[0]; // Update the datetime with the new date from Flatpickr
+            updateDateTime(); // Also update time to reflect changes on the same object
+        }
+    });
 
 
     function replacePlaceholders(text, datetime) {
@@ -181,7 +313,8 @@
         style:
             'https://api.maptiler.com/maps/d856b495-1396-447c-80d5-0fd7fca006e0/style.json?key=uxGPO18AyvxUdEGKe02K',
         center: [-88.13734351262877, 35.137451890638886],
-        zoom: 4
+        zoom: 4,
+        TerrainControl: true
     });
 
     map.on('load', () => {
@@ -193,6 +326,37 @@
                 break;
             }
         }
+
+        // Add zoom and rotation controls to the map.
+        map.addControl(new maplibregl.NavigationControl());
+        
+        
+        // Add geolocate control to the map.
+        map.addControl(
+            new maplibregl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true
+            })
+        );
+
+        // Add terrain source
+        map.addSource("terrain", {
+            type: "raster-dem",
+            url: "https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=uxGPO18AyvxUdEGKe02K"
+        });
+
+        // Set terrain with exaggeration
+        map.setTerrain({
+            source: "terrain",
+            exaggeration: 2.5
+        });
+
+        // Add TerrainControl
+        map.addControl(new maplibregl.TerrainControl({
+            source: "terrain"
+        }));
 
         updateDateTime();
     });
